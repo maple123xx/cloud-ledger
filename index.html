@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的记账本</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 40px 16px;
+            font-family: "Microsoft YaHei", sans-serif;
+            background-color: #f3f4f6;
+            color: #1f2937;
+        }
+
+        main {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 24px;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+        }
+
+        h1 {
+            margin-top: 0;
+            color: #2563eb;
+        }
+
+        h2 {
+            margin-top: 32px;
+            font-size: 20px;
+        }
+
+        .balance {
+            padding: 20px;
+            background-color: #eff6ff;
+            border-radius: 8px;
+        }
+
+        .balance p {
+            margin: 0 0 8px;
+        }
+
+        .balance strong {
+            color: #16a34a;
+            font-size: 32px;
+            overflow-wrap: anywhere;
+        }
+
+        .field {
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font: inherit;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font: inherit;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #1d4ed8;
+        }
+
+        .empty {
+            color: #6b7280;
+            text-align: center;
+            padding: 20px;
+            border: 1px dashed #d1d5db;
+            border-radius: 8px;
+        }
+
+        #records {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        #records li {
+            padding: 14px 0;
+            border-bottom: 1px solid #e5e7eb;
+            overflow-wrap: anywhere;
+        }
+
+        .income {
+            color: #15803d;
+        }
+
+        .expense {
+            color: #dc2626;
+        }
+        [hidden] { display: none !important; }
+        button:disabled { opacity: .55; cursor: wait; }
+        #status { min-height: 1.5em; }
+        #refresh, #import { margin-bottom: 12px; background: #334155; }
+        #account, #import-hint { overflow-wrap: anywhere; font-size: 14px; }
+        a { color: #2563eb; }
+    </style>
+</head>
+
+<body>
+    <main>
+        <h1>我的记账本</h1>
+        <p id="account">正在连接云端…</p>
+        <p><a id="sign-in" href="/signin-with-chatgpt?return_to=%2F" target="_top" hidden>使用 ChatGPT 登录</a>
+        <a id="sign-out" href="/signout-with-chatgpt?return_to=%2F" target="_top" hidden>退出登录</a></p>
+        <p id="status" role="status" aria-live="polite"></p>
+        <button id="refresh" type="button" hidden>刷新云端账目</button>
+        <button id="import" type="button" hidden>导入此浏览器的旧账目</button>
+        <p id="import-hint" hidden>导入到当前登录账号；原来的本地记录会保留。请只在属于你的浏览器中导入。</p>
+
+        <div class="balance">
+            <p>当前余额</p>
+            <strong id="balance" aria-live="polite">0.00 元</strong>
+        </div>
+
+        <h2>添加一笔账目</h2>
+
+        <div class="field">
+            <label for="type">类型</label>
+            <select id="type">
+                <option value="income">收入</option>
+                <option value="expense">支出</option>
+            </select>
+        </div>
+
+        <div class="field">
+            <label for="amount">金额（元）</label>
+            <input
+                id="amount"
+                type="number"
+                min="0.01"
+                step="0.01"
+                placeholder="例如：25.50"
+            >
+        </div>
+
+        <div class="field">
+            <label for="note">备注（可选）</label>
+            <input
+                id="note"
+                type="text"
+                maxlength="200"
+                placeholder="例如：午餐、工资"
+            >
+        </div>
+
+        <button id="add-button" type="button" disabled>添加记录</button>
+
+        <h2>收支明细</h2>
+        <p id="empty-message" class="empty">暂无记录</p>
+        <ul id="records"></ul>
+    </main>
+
+    <script src="/client.js"></script>
+</body>
+</html>
