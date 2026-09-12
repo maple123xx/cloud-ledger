@@ -1,0 +1,11 @@
+import fs from 'node:fs';
+const manifest=JSON.parse(fs.readFileSync('.openai/hosting.json','utf8'));
+if(manifest.static || manifest.d1 !== 'DB') throw Error('Invalid cloud configuration');
+fs.mkdirSync('dist/server',{recursive:true});
+fs.mkdirSync('dist/.openai',{recursive:true});
+const source=fs.readFileSync('worker.mjs','utf8');
+const page=fs.readFileSync('index.html','utf8').replace('<script src="/client.js"></script>', '<script>'+fs.readFileSync('client.js','utf8')+'</script>');
+fs.writeFileSync('dist/server/index.js',source.replace('const PAGE = "__HTML__";', 'const PAGE = '+JSON.stringify(page)+';'));
+fs.writeFileSync('dist/.openai/hosting.json',JSON.stringify(manifest,null,2));
+fs.cpSync('drizzle','dist/.openai/drizzle',{recursive:true});
+console.log('Built cloud ledger with database migrations');
